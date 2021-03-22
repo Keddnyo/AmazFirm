@@ -12,4 +12,8 @@
     <string name="retry">Повторить</string>
     <string name="close">Закрыть</string>
     <string name="trying_to_download">Повторная попытка скачивания</string>
+    <string name="rotation">Автоповорот</string>
+    <string name="refresh">Обновить</string>
+    <string name="no_rotation">Поворот отключен</string>
+    <string name="yes_rotation">Поворот включен</string>
 </resources>

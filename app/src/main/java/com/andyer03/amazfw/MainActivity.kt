@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.DialogInterface
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -180,6 +181,31 @@ class MainActivity : AppCompatActivity() {
         R.id.refresh_button -> {
             val webView = findViewById<WebView>(R.id.webView)
             webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
+            true
+        }
+        R.id.rotation_button -> {
+            //Shared preferences Start
+            val sharedPreference =  getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
+            var editor = sharedPreference.edit()
+            //Shared preferences End
+
+            if (sharedPreference.getInt("Rotation", 1) == 1) {
+
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
+                Toast.makeText(applicationContext, getString(R.string.no_rotation), Toast.LENGTH_SHORT).show()
+
+                editor.putInt("Rotation", 0)
+                editor.apply()
+
+            } else if (sharedPreference.getInt("Rotation", 1) == 0) {
+
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                Toast.makeText(applicationContext, getString(R.string.yes_rotation), Toast.LENGTH_SHORT).show()
+
+                editor.putInt("Rotation", 0)
+                editor.apply()
+
+            }
             true
         }
         else -> super.onOptionsItemSelected(item)

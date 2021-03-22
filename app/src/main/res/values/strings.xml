@@ -11,4 +11,8 @@
     <string name="retry">Retry</string>
     <string name="close">Close</string>
     <string name="trying_to_download">Trying to download again</string>
+    <string name="rotation">Autorotation</string>
+    <string name="refresh">Refresh</string>
+    <string name="no_rotation">Rotation disabled</string>
+    <string name="yes_rotation">Rotation enabled</string>
 </resources>
