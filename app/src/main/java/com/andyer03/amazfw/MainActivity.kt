@@ -5,7 +5,6 @@ import android.app.DownloadManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.Configuration
-import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -72,11 +71,20 @@ class MainActivity : AppCompatActivity() {
                 val alertDialog = AlertDialog.Builder(this@MainActivity).create()
                 alertDialog.setTitle(getString(R.string.error))
                 alertDialog.setMessage(getString(R.string.retry_connect))
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.close)) { _, _ ->
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.retry)) { _, _ ->
+                    alertDialog.dismiss()
+                    webView.reload()
+                    webView.goBack()
+                    Toast.makeText(applicationContext, getString(R.string.trying_to_download), Toast.LENGTH_SHORT).show()
+                }
+                alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.close)) { _, _ ->
                     alertDialog.dismiss()
                     webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
                 }
                 alertDialog.show()
+                if (webView.url != "https://schakal.ru/fw/firmwares_list.htm") {
+                    webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
+                }
                 super.onReceivedError(webView, errorCode, description, failingUrl)
             }
         }
@@ -85,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         webSettings.javaScriptEnabled = true
 
         floatingActionButton.setOnClickListener {
-            ThemeSwitch()
+            themeSwitch()
         }
     }
 
@@ -98,7 +106,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun ThemeSwitch() {
+    fun themeSwitch() {
         val webView = findViewById<WebView>(R.id.webView)
         val webSettings = webView.settings
         val floatingActionButton = findViewById<FloatingActionButton>(R.id.floatingActionButton)

@@ -8,5 +8,7 @@
     <string name="downloading">Downloading file</string>
     <string name="error">Error</string>
     <string name="retry_connect">Check your internet connection and try again.</string>
+    <string name="retry">Retry</string>
     <string name="close">Close</string>
+    <string name="trying_to_download">Trying to download again</string>
 </resources>
