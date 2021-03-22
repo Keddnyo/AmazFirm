@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">AmazFW</string>
+    <string name="about">About</string>
+    <string name="logics_credits">Logics created by Schakal</string>
+    <string name="app_credits">App created by AndyER03</string>
+    <string name="exit_content">Are you sure you want to exit?</string>
+    <string name="exit_title">Exit</string>
 </resources>
