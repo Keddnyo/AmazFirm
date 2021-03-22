@@ -1,11 +1,11 @@
 package com.andyer03.amazfw
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //Apply saved theme on opening
-        ThemeSwitchOnly()
+        themeSwitchOnly()
 
         //Shared preferences Start
         val sharedPreference =  getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
@@ -175,8 +175,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("CommitPrefEdits")
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun ThemeSwitchOnly() {
+    fun themeSwitchOnly() {
         val webView = findViewById<WebView>(R.id.webView)
         val webSettings = webView.settings
 
@@ -186,9 +187,9 @@ class MainActivity : AppCompatActivity() {
         //Shared preferences End
 
         if (sharedPreference.getInt("Theme", 1) == 1) {
-            webSettings.forceDark = WebSettings.FORCE_DARK_OFF
-        } else {
             webSettings.forceDark = WebSettings.FORCE_DARK_ON
+        } else {
+            webSettings.forceDark = WebSettings.FORCE_DARK_OFF
         }
     }
 
