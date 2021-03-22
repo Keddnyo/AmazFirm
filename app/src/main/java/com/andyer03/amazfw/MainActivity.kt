@@ -41,6 +41,31 @@ class MainActivity : AppCompatActivity() {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
         }
 
+        val webView = findViewById<WebView>(R.id.webView)
+
+        webView.webViewClient = object : WebViewClient() {
+            override fun onReceivedError(webView: WebView, errorCode: Int, description: String, failingUrl: String) {
+                try {
+                    webView.stopLoading()
+                } catch (e: Exception) {
+                }
+                if (webView.canGoBack()) {
+                    webView.goBack()
+                }
+                webView.loadUrl("about:blank")
+                val alertDialog = AlertDialog.Builder(this@MainActivity).create()
+                alertDialog.setTitle(getString(R.string.error))
+                alertDialog.setMessage(getString(R.string.retry_connect))
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.retry)) { _, _ ->
+                    alertDialog.dismiss()
+                    webView.reload()
+                    webView.goBack()
+                }
+                alertDialog.show()
+                super.onReceivedError(webView, errorCode, description, failingUrl)
+            }
+        }
+
         val permissionCheck = ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             //requesting permission
@@ -69,37 +94,38 @@ class MainActivity : AppCompatActivity() {
             val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             dm.enqueue(request)
             Toast.makeText(applicationContext, getString(R.string.downloading), Toast.LENGTH_LONG).show()
-        }
 
-        webView.webViewClient = object : WebViewClient() {
-            override fun onReceivedError(webView: WebView, errorCode: Int, description: String, failingUrl: String) {
-                try {
-                    webView.stopLoading()
-                } catch (e: Exception) {
+            webView.webViewClient = object : WebViewClient() {
+                override fun onReceivedError(webView: WebView, errorCode: Int, description: String, failingUrl: String) {
+                    try {
+                        webView.stopLoading()
+                    } catch (e: Exception) {
+                    }
+                    if (webView.canGoBack()) {
+                        webView.goBack()
+                    }
+                    webView.loadUrl("about:blank")
+                    val alertDialog = AlertDialog.Builder(this@MainActivity).create()
+                    alertDialog.setTitle(getString(R.string.error))
+                    alertDialog.setMessage(getString(R.string.retry_connect))
+                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.retry)) { _, _ ->
+                        alertDialog.dismiss()
+                        webView.reload()
+                        webView.goBack()
+                        Toast.makeText(applicationContext, getString(R.string.trying_to_download), Toast.LENGTH_SHORT).show()
+                    }
+                    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.close)) { _, _ ->
+                        alertDialog.dismiss()
+                        webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
+                    }
+                    alertDialog.show()
+                    if (webView.url != "https://schakal.ru/fw/firmwares_list.htm") {
+                        webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
+                    }
+                    super.onReceivedError(webView, errorCode, description, failingUrl)
                 }
-                if (webView.canGoBack()) {
-                    webView.goBack()
-                }
-                webView.loadUrl("about:blank")
-                val alertDialog = AlertDialog.Builder(this@MainActivity).create()
-                alertDialog.setTitle(getString(R.string.error))
-                alertDialog.setMessage(getString(R.string.retry_connect))
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.retry)) { _, _ ->
-                    alertDialog.dismiss()
-                    webView.reload()
-                    webView.goBack()
-                    Toast.makeText(applicationContext, getString(R.string.trying_to_download), Toast.LENGTH_SHORT).show()
-                }
-                alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.close)) { _, _ ->
-                    alertDialog.dismiss()
-                    webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
-                }
-                alertDialog.show()
-                if (webView.url != "https://schakal.ru/fw/firmwares_list.htm") {
-                    webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
-                }
-                super.onReceivedError(webView, errorCode, description, failingUrl)
             }
+
         }
 
         val webSettings = webView.settings
@@ -146,9 +172,9 @@ class MainActivity : AppCompatActivity() {
         //Shared preferences End
 
         if (sharedPreference.getInt("Theme", 1) == 1) {
-            webSettings.forceDark = WebSettings.FORCE_DARK_ON
-        } else {
             webSettings.forceDark = WebSettings.FORCE_DARK_OFF
+        } else {
+            webSettings.forceDark = WebSettings.FORCE_DARK_ON
         }
     }
 
