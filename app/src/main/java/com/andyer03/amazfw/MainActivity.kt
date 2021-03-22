@@ -1,25 +1,16 @@
 package com.andyer03.amazfw
 
-import android.Manifest
 import android.app.AlertDialog
-import android.app.DownloadManager
 import android.content.Context
-import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.CookieManager
-import android.webkit.URLUtil
 import android.webkit.WebSettings
 import android.webkit.WebView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -161,4 +152,5 @@ class MainActivity : AppCompatActivity() {
         }
         builder.show()
     }
+
 }
