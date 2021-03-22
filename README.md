@@ -8,5 +8,6 @@ AmazFirm is an application for simple downloading any firmwares for Xiaomi and A
 * Dialog on internet connection error
 * Rotation lock setting
 * Dialog on exit
+* Application content provided by WebView component
 
 **Similar app:** [BandyFW](https://github.com/AndyER03/BandyFW)
