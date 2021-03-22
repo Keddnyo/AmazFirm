@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -12,14 +13,18 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.View.OnLongClickListener
 import android.webkit.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+
 
 class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -42,6 +47,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         val webView = findViewById<WebView>(R.id.webView)
+        Handler().postDelayed({
+            webView.visibility = View.VISIBLE
+        }, 2000)
 
         webView.webViewClient = object : WebViewClient() {
             override fun onReceivedError(webView: WebView, errorCode: Int, description: String, failingUrl: String) {
@@ -79,6 +87,12 @@ class MainActivity : AppCompatActivity() {
 
         val webView = findViewById<WebView>(R.id.webView)
         webView.isLongClickable = false
+        webView.isHapticFeedbackEnabled = false
+        webView.isLongClickable = true
+        webView.setOnLongClickListener(OnLongClickListener { true })
+        webView.isFocusableInTouchMode = false
+        webView.isFocusable = false
+
         webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
 
         webView.setDownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
