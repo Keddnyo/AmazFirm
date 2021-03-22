@@ -1,10 +1,12 @@
 package com.andyer03.amazfw
 
+import android.Manifest
 import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -17,8 +19,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-
+import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -26,13 +27,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //Apply saved theme on opening
         ThemeSwitchOnly()
 
-        //val permissionCheck = ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        //if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-        //    //requesting permission
-        //    ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
-        //}
+        //Shared preferences Start
+        val sharedPreference =  getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
+        var editor = sharedPreference.edit()
+        //Shared preferences End
+
+        if (sharedPreference.getInt("Rotation", 1) == 0) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
+        } else if (sharedPreference.getInt("Rotation", 1) == 1) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+        }
+
+        val permissionCheck = ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            //requesting permission
+            ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -41,7 +54,6 @@ class MainActivity : AppCompatActivity() {
 
         val webView = findViewById<WebView>(R.id.webView)
         webView.isLongClickable = false
-        val floatingActionButton = findViewById<FloatingActionButton>(R.id.floatingActionButton)
         webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
 
         webView.setDownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
@@ -92,10 +104,6 @@ class MainActivity : AppCompatActivity() {
 
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
-
-        floatingActionButton.setOnClickListener {
-            themeSwitch()
-        }
     }
 
     class MyClient : WebViewClient() {
@@ -110,7 +118,6 @@ class MainActivity : AppCompatActivity() {
     fun themeSwitch() {
         val webView = findViewById<WebView>(R.id.webView)
         val webSettings = webView.settings
-        val floatingActionButton = findViewById<FloatingActionButton>(R.id.floatingActionButton)
 
         //Shared preferences Start
         val sharedPreference =  getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
@@ -119,12 +126,10 @@ class MainActivity : AppCompatActivity() {
 
         if (sharedPreference.getInt("Theme", 1) == 1) {
             webSettings.forceDark = WebSettings.FORCE_DARK_OFF
-            floatingActionButton.setImageResource(R.drawable.ic_moon)
             editor.putInt("Theme", 0)
             editor.apply()
         } else {
             webSettings.forceDark = WebSettings.FORCE_DARK_ON
-            floatingActionButton.setImageResource(R.drawable.ic_sun)
             editor.putInt("Theme", 1)
             editor.apply()
         }
@@ -134,7 +139,6 @@ class MainActivity : AppCompatActivity() {
     fun ThemeSwitchOnly() {
         val webView = findViewById<WebView>(R.id.webView)
         val webSettings = webView.settings
-        val floatingActionButton = findViewById<FloatingActionButton>(R.id.floatingActionButton)
 
         //Shared preferences Start
         val sharedPreference =  getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
@@ -143,10 +147,8 @@ class MainActivity : AppCompatActivity() {
 
         if (sharedPreference.getInt("Theme", 1) == 1) {
             webSettings.forceDark = WebSettings.FORCE_DARK_ON
-            floatingActionButton.setImageResource(R.drawable.ic_sun)
         } else {
             webSettings.forceDark = WebSettings.FORCE_DARK_OFF
-            floatingActionButton.setImageResource(R.drawable.ic_moon)
         }
     }
 
@@ -167,6 +169,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.about_button -> {
             val builder = AlertDialog.Builder(this)
@@ -183,7 +186,12 @@ class MainActivity : AppCompatActivity() {
             webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
             true
         }
+        R.id.theme_button -> {
+            themeSwitch()
+            true
+        }
         R.id.rotation_button -> {
+
             //Shared preferences Start
             val sharedPreference =  getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
             var editor = sharedPreference.edit()
@@ -202,7 +210,7 @@ class MainActivity : AppCompatActivity() {
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
                 Toast.makeText(applicationContext, getString(R.string.yes_rotation), Toast.LENGTH_SHORT).show()
 
-                editor.putInt("Rotation", 0)
+                editor.putInt("Rotation", 1)
                 editor.apply()
 
             }

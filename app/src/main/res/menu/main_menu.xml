@@ -6,18 +6,24 @@
         android:id="@+id/rotation_button"
         android:icon="@drawable/ic_screen_rotation"
         android:title="@string/rotation"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/theme_button"
+        android:icon="@drawable/ic_moon"
+        android:title="@string/theme"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/refresh_button"
         android:icon="@drawable/ic_refresh"
         android:title="@string/refresh"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/about_button"
         android:icon="@drawable/ic_about"
         android:title="@string/about"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
 </menu>

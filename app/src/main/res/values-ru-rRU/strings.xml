@@ -16,4 +16,5 @@
     <string name="refresh">Обновить</string>
     <string name="no_rotation">Поворот отключен</string>
     <string name="yes_rotation">Поворот включен</string>
+    <string name="theme">Сменить тему</string>
 </resources>
