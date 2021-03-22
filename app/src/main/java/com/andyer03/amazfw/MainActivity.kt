@@ -25,9 +25,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class MainActivity : AppCompatActivity() {
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        ThemeSwitchOnly()
 
         //val permissionCheck = ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         //if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -42,11 +45,6 @@ class MainActivity : AppCompatActivity() {
 
         val webView = findViewById<WebView>(R.id.webView)
         val floatingActionButton = findViewById<FloatingActionButton>(R.id.floatingActionButton)
-
-        //Shared preferences Start
-        val sharedPreference =  getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
-        var editor = sharedPreference.edit()
-        //Shared preferences End
 
         //webView.setDownloadListener { url, userAgent, contentDisposition, mimeType, contentLength ->
         //    val request = DownloadManager.Request(
@@ -72,17 +70,63 @@ class MainActivity : AppCompatActivity() {
         webSettings.javaScriptEnabled = true
 
         floatingActionButton.setOnClickListener {
-            if (sharedPreference.getInt("Theme", 0) == 1) {
-                webSettings.forceDark = WebSettings.FORCE_DARK_OFF
-                floatingActionButton.setImageResource(R.drawable.ic_moon)
-                editor.putInt("Theme", 0)
-                editor.apply()
-            } else {
-                webSettings.forceDark = WebSettings.FORCE_DARK_ON
-                floatingActionButton.setImageResource(R.drawable.ic_sun)
-                editor.putInt("Theme", 1)
-                editor.apply()
-            }
+            ThemeSwitch()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun ThemeSwitch() {
+        val webView = findViewById<WebView>(R.id.webView)
+        val webSettings = webView.settings
+        val floatingActionButton = findViewById<FloatingActionButton>(R.id.floatingActionButton)
+
+        //Shared preferences Start
+        val sharedPreference =  getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
+        var editor = sharedPreference.edit()
+        //Shared preferences End
+
+        if (sharedPreference.getInt("Theme", 1) == 1) {
+            webSettings.forceDark = WebSettings.FORCE_DARK_OFF
+            floatingActionButton.setImageResource(R.drawable.ic_moon)
+            editor.putInt("Theme", 0)
+            editor.apply()
+        } else {
+            webSettings.forceDark = WebSettings.FORCE_DARK_ON
+            floatingActionButton.setImageResource(R.drawable.ic_sun)
+            editor.putInt("Theme", 1)
+            editor.apply()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun ThemeSwitchOnly() {
+        val webView = findViewById<WebView>(R.id.webView)
+        val webSettings = webView.settings
+        val floatingActionButton = findViewById<FloatingActionButton>(R.id.floatingActionButton)
+
+        //Shared preferences Start
+        val sharedPreference =  getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
+        var editor = sharedPreference.edit()
+        //Shared preferences End
+
+        if (sharedPreference.getInt("Theme", 1) == 1) {
+            webSettings.forceDark = WebSettings.FORCE_DARK_ON
+            floatingActionButton.setImageResource(R.drawable.ic_sun)
+        } else {
+            webSettings.forceDark = WebSettings.FORCE_DARK_OFF
+            floatingActionButton.setImageResource(R.drawable.ic_moon)
+        }
+    }
+
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
     }
 
