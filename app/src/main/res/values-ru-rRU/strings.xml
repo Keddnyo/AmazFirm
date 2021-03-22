@@ -6,4 +6,8 @@
     <string name="app_credits">Приложение разработал AndyER03</string>
     <string name="exit_content">Вы уверены что хотите выйти?</string>
     <string name="exit_title">Выход</string>
+    <string name="downloading">Загрузка файла</string>
+    <string name="error">Ошибка</string>
+    <string name="retry_connect">Проверьте подключение к интернету и повторите попытку.</string>
+    <string name="retry">Повторить</string>
 </resources>

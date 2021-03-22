@@ -3,9 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/refresh_button"
+        android:icon="@drawable/ic_refresh"
+        android:title="Refresh"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/about_button"
         android:icon="@drawable/ic_about"
-        android:title="Dark theme"
+        android:title="@string/about"
         app:showAsAction="always" />
 
 </menu>

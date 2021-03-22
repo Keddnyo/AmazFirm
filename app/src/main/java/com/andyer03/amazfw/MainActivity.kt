@@ -1,14 +1,19 @@
 package com.andyer03.amazfw
 
 import android.app.AlertDialog
+import android.app.DownloadManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.Configuration
+import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.WebSettings
-import android.webkit.WebView
+import android.webkit.*
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -35,33 +40,62 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         val webView = findViewById<WebView>(R.id.webView)
+        webView.isLongClickable = false
         val floatingActionButton = findViewById<FloatingActionButton>(R.id.floatingActionButton)
-
-        //webView.setDownloadListener { url, userAgent, contentDisposition, mimeType, contentLength ->
-        //    val request = DownloadManager.Request(
-        //            Uri.parse(url))
-        //    request.setMimeType(mimeType)
-        //    val cookies: String = CookieManager.getInstance().getCookie(url)
-        //    request.addRequestHeader("cookie", cookies)
-        //    request.addRequestHeader("User-Agent", userAgent)
-        //    request.setDescription("Downloading File...")
-        //    request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType))
-        //    request.allowScanningByMediaScanner()
-        //    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        //    request.setDestinationInExternalPublicDir(
-        //            Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(
-        //            url, contentDisposition, mimeType))
-        //    val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        //    dm.enqueue(request)
-        //    Toast.makeText(applicationContext, "Downloading File", Toast.LENGTH_LONG).show()
-        //}
-
         webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
+
+        webView.setDownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
+            Callback()
+            val request = DownloadManager.Request(Uri.parse(url))
+            request.setMimeType(mimeType)
+            request.addRequestHeader("cookie", CookieManager.getInstance().getCookie(url))
+            request.addRequestHeader("User-Agent", userAgent)
+            request.setDescription("Downloading file...")
+            request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType))
+            request.allowScanningByMediaScanner()
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            request.setDestinationInExternalFilesDir(this@MainActivity, Environment.DIRECTORY_DOWNLOADS, ".zip")
+            val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            dm.enqueue(request)
+            Toast.makeText(applicationContext, getString(R.string.downloading), Toast.LENGTH_LONG).show()
+        }
+
+        webView.webViewClient = object : WebViewClient() {
+            override fun onReceivedError(webView: WebView, errorCode: Int, description: String, failingUrl: String) {
+                try {
+                    webView.stopLoading()
+                } catch (e: Exception) {
+                }
+                if (webView.canGoBack()) {
+                    webView.goBack()
+                }
+                webView.loadUrl("about:blank")
+                val alertDialog = AlertDialog.Builder(this@MainActivity).create()
+                alertDialog.setTitle(getString(R.string.error))
+                alertDialog.setMessage(getString(R.string.retry_connect))
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.retry)) { _, _ ->
+                    alertDialog.dismiss()
+                    webView.reload()
+                    webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
+                }
+                alertDialog.show()
+                super.onReceivedError(webView, errorCode, description, failingUrl)
+            }
+        }
+
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
 
         floatingActionButton.setOnClickListener {
             ThemeSwitch()
+        }
+    }
+
+    class MyClient : WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView, Url: String): Boolean {
+            view.loadUrl(Url)
+            return true
+
         }
     }
 
@@ -137,6 +171,11 @@ class MainActivity : AppCompatActivity() {
             builder.show()
             true
         }
+        R.id.refresh_button -> {
+            val webView = findViewById<WebView>(R.id.webView)
+            webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -151,6 +190,19 @@ class MainActivity : AppCompatActivity() {
             dialog.cancel()
         }
         builder.show()
+    }
+
+    fun checkInternetConnection(context: Context): Boolean {
+        val con_manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return (con_manager.activeNetworkInfo != null && con_manager.activeNetworkInfo!!.isAvailable
+                && con_manager.activeNetworkInfo!!.isConnected)
+    }
+
+    inner class Callback : WebViewClient() {
+        override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
+            Toast.makeText(applicationContext, "No Internet Access!", Toast.LENGTH_SHORT).show()
+            view.loadUrl("file:///android_asset/NoInternet.html")
+        }
     }
 
 }
