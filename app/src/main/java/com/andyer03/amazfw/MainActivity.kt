@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
 
         webView.setDownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
-            Callback()
             val request = DownloadManager.Request(Uri.parse(url))
             request.setMimeType(mimeType)
             request.addRequestHeader("cookie", CookieManager.getInstance().getCookie(url))
@@ -73,9 +72,8 @@ class MainActivity : AppCompatActivity() {
                 val alertDialog = AlertDialog.Builder(this@MainActivity).create()
                 alertDialog.setTitle(getString(R.string.error))
                 alertDialog.setMessage(getString(R.string.retry_connect))
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.retry)) { _, _ ->
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.close)) { _, _ ->
                     alertDialog.dismiss()
-                    webView.reload()
                     webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
                 }
                 alertDialog.show()
@@ -190,19 +188,6 @@ class MainActivity : AppCompatActivity() {
             dialog.cancel()
         }
         builder.show()
-    }
-
-    fun checkInternetConnection(context: Context): Boolean {
-        val con_manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return (con_manager.activeNetworkInfo != null && con_manager.activeNetworkInfo!!.isAvailable
-                && con_manager.activeNetworkInfo!!.isConnected)
-    }
-
-    inner class Callback : WebViewClient() {
-        override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
-            Toast.makeText(applicationContext, "No Internet Access!", Toast.LENGTH_SHORT).show()
-            view.loadUrl("file:///android_asset/NoInternet.html")
-        }
     }
 
 }
