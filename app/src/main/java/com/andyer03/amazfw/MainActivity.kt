@@ -126,16 +126,14 @@ class MainActivity : AppCompatActivity() {
                         alertDialog.dismiss()
                         webView.reload()
                         webView.goBack()
-                        Toast.makeText(applicationContext, getString(R.string.trying_to_download), Toast.LENGTH_SHORT).show()
                     }
                     alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.close)) { _, _ ->
                         alertDialog.dismiss()
                         webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
                     }
                     alertDialog.show()
-                    if (webView.url != "https://schakal.ru/fw/firmwares_list.htm") {
-                        webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
-                    }
+                    webView.reload()
+                    webView.loadUrl("https://schakal.ru/fw/firmwares_list.htm")
                     super.onReceivedError(webView, errorCode, description, failingUrl)
                 }
             }
@@ -164,7 +162,7 @@ class MainActivity : AppCompatActivity() {
         var editor = sharedPreference.edit()
         //Shared preferences End
 
-        if (sharedPreference.getInt("Theme", 1) == 1) {
+        if (sharedPreference.getInt("Theme", 0) == 1) {
             webSettings.forceDark = WebSettings.FORCE_DARK_OFF
             editor.putInt("Theme", 0)
             editor.apply()
@@ -183,25 +181,12 @@ class MainActivity : AppCompatActivity() {
 
         //Shared preferences Start
         val sharedPreference =  getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
-        var editor = sharedPreference.edit()
         //Shared preferences End
 
         if (sharedPreference.getInt("Theme", 1) == 1) {
-            webSettings.forceDark = WebSettings.FORCE_DARK_ON
-        } else {
             webSettings.forceDark = WebSettings.FORCE_DARK_OFF
-        }
-    }
-
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-
-        if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO){
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            webSettings.forceDark = WebSettings.FORCE_DARK_ON
         }
     }
 
@@ -215,7 +200,13 @@ class MainActivity : AppCompatActivity() {
         R.id.about_button -> {
             val builder = AlertDialog.Builder(this)
             builder.setTitle(getString(R.string.about))
-            builder.setMessage(getString(R.string.logics_credits)+"\n"+getString(R.string.app_credits))
+            builder.setMessage(getString(R.string.app_name)+
+                    " "+
+                    BuildConfig.VERSION_NAME+
+                    "\n\n"+
+                    getString(R.string.logics_credits)+
+                    "\n"+
+                    getString(R.string.app_credits))
             builder.setPositiveButton(android.R.string.yes) { dialog, _ ->
                 dialog.cancel()
             }
