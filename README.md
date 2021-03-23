@@ -2,6 +2,7 @@
 AmazFirm is an application for simple downloading any firmwares for Xiaomi and Amazfit wearable devices from Xiaomi server directly.
 
 **Features:**
+* Android 4.1+ support
 * Wide wearable devices support
 * Downloading firmwares from app directly to Downloads folder
 * Dark theme support
