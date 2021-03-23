@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">AmazFirm</string>
     <string name="about">О программе</string>
-    <string name="logics_credits">Логику разработал Schakal</string>
+    <string name="logic_credits">Логику разработал Schakal</string>
     <string name="app_credits">Приложение разработал AndyER03</string>
     <string name="exit_content">Вы уверены что хотите выйти?</string>
     <string name="exit_title">Выход</string>
@@ -11,9 +11,4 @@
     <string name="retry_connect">Проверьте подключение к интернету и повторите попытку.</string>
     <string name="retry">Повторить</string>
     <string name="close">Закрыть</string>
-    <string name="rotation">Автоповорот</string>
-    <string name="refresh">Обновить</string>
-    <string name="no_rotation">Поворот отключен</string>
-    <string name="yes_rotation">Поворот включен</string>
-    <string name="theme">Сменить тему</string>
 </resources>

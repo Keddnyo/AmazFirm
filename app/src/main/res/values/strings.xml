@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AmazFirm</string>
     <string name="about">About</string>
-    <string name="logics_credits">Logics created by Schakal</string>
+    <string name="logic_credits">Logic created by Schakal</string>
     <string name="app_credits">App created by AndyER03</string>
     <string name="exit_content">Are you sure you want to exit?</string>
     <string name="exit_title">Exit</string>
@@ -10,9 +10,4 @@
     <string name="retry_connect">Check your internet connection and try again.</string>
     <string name="retry">Retry</string>
     <string name="close">Close</string>
-    <string name="rotation">Autorotation</string>
-    <string name="refresh">Refresh</string>
-    <string name="no_rotation">Rotation disabled</string>
-    <string name="yes_rotation">Rotation enabled</string>
-    <string name="theme">Switch theme</string>
 </resources>
