@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType))
             request.allowScanningByMediaScanner()
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            request.setDestinationInExternalFilesDir(this@MainActivity, Environment.DIRECTORY_DOWNLOADS, ".zip")
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimeType))
             val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             dm.enqueue(request)
             Toast.makeText(applicationContext, getString(R.string.downloading), Toast.LENGTH_LONG).show()
