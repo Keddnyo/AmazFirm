@@ -23,15 +23,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         val permissionCheck = ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            //requesting permission
             ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
         }
-
+    }
+    override fun onResume() {
+        super.onResume()
         val webView = findViewById<WebView>(R.id.webView)
-
+        webView.loadUrl(url)
         webView.webViewClient = object : WebViewClient() {
             override fun onReceivedError(webView: WebView, errorCode: Int, description: String, failingUrl: String) {
                 try {
@@ -48,18 +48,13 @@ class MainActivity : AppCompatActivity() {
                 alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.retry)) { _, _ ->
                     alertDialog.dismiss()
                     webView.reload()
-                    webView.goBack()
+                    webView.loadUrl(url)
                 }
+                alertDialog.setCancelable(false)
                 alertDialog.show()
                 super.onReceivedError(webView, errorCode, description, failingUrl)
             }
         }
-    }
-    override fun onResume() {
-        super.onResume()
-        val webView = findViewById<WebView>(R.id.webView)
-        webView.loadUrl(url)
-
         webView.setDownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
             val request = DownloadManager.Request(Uri.parse(url))
             request.setMimeType(mimeType)
@@ -73,35 +68,6 @@ class MainActivity : AppCompatActivity() {
             val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             dm.enqueue(request)
             Toast.makeText(applicationContext, getString(R.string.downloading), Toast.LENGTH_LONG).show()
-
-            webView.webViewClient = object : WebViewClient() {
-                override fun onReceivedError(webView: WebView, errorCode: Int, description: String, failingUrl: String) {
-                    try {
-                        webView.stopLoading()
-                    } catch (e: Exception) {
-                    }
-                    if (webView.canGoBack()) {
-                        webView.goBack()
-                    }
-                    webView.loadUrl("about:blank")
-                    val alertDialog = AlertDialog.Builder(this@MainActivity).create()
-                    alertDialog.setTitle(getString(R.string.error))
-                    alertDialog.setMessage(getString(R.string.retry_connect))
-                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.retry)) { _, _ ->
-                        alertDialog.dismiss()
-                        webView.reload()
-                        webView.goBack()
-                    }
-                    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.close)) { _, _ ->
-                        alertDialog.dismiss()
-                        webView.loadUrl(url)
-                    }
-                    alertDialog.show()
-                    webView.reload()
-                    webView.loadUrl(url)
-                    super.onReceivedError(webView, errorCode, description, failingUrl)
-                }
-            }
         }
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
