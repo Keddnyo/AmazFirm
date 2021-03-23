@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AmazFirm</string>
-    <string name="about">О программе</string>
     <string name="logic_credits">Логику разработал Schakal</string>
     <string name="app_credits">Приложение разработал AndyER03</string>
-    <string name="exit_content">Вы уверены что хотите выйти?</string>
     <string name="exit_title">Выход</string>
     <string name="downloading">Загрузка файла</string>
     <string name="error">Ошибка</string>
-    <string name="retry_connect">Проверьте подключение к интернету и повторите попытку.</string>
-    <string name="retry">Повторить</string>
+    <string name="retry_connect">Проверьте подключение к интернету</string>
+    <string name="back">Назад</string>
 </resources>
