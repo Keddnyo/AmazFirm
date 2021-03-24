@@ -1,10 +1,10 @@
 package com.andyer03.amazfw
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
-import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity() {
     private val url = "https://schakal.ru/fw/firmwares_list.htm"
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -24,24 +25,21 @@ class MainActivity : AppCompatActivity() {
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
         }
-    }
-    override fun onResume() {
-        super.onResume()
         val webView = findViewById<WebView>(R.id.webView)
-        webView.loadUrl(url)
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             webSettings.forceDark = WebSettings.FORCE_DARK_AUTO
         }
+        webView.loadUrl(url)
         webView.webViewClient = object : WebViewClient() {
             override fun onReceivedError(webView: WebView, errorCode: Int, description: String, failingUrl: String) {
                 webView.loadUrl("about:blank")
-                val alertDialog = AlertDialog.Builder(this@MainActivity).create()
+                val alertDialog = AlertDialog.Builder(this@MainActivity)
                 alertDialog.setTitle(getString(R.string.error))
                 alertDialog.setMessage(getString(R.string.retry_connect))
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.back)) { _, _ ->
-                    alertDialog.dismiss()
+                alertDialog.setNegativeButton(getString(R.string.back)) { dialog, _ ->
+                    dialog.dismiss()
                     webView.reload()
                     webView.loadUrl(url)
                 }
@@ -49,11 +47,8 @@ class MainActivity : AppCompatActivity() {
                 alertDialog.show()
             }
         }
-        webView.setDownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
+        webView.setDownloadListener { url, _, contentDisposition, mimeType, _ ->
             val request = DownloadManager.Request(Uri.parse(url))
-            request.setMimeType(mimeType)
-            request.addRequestHeader("cookie", CookieManager.getInstance().getCookie(url))
-            request.addRequestHeader("User-Agent", userAgent)
             request.setDescription(getString(R.string.downloading))
             request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType))
             request.allowScanningByMediaScanner()
@@ -65,23 +60,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
     override fun onBackPressed() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.app_name)+
-                " "+
-                BuildConfig.VERSION_NAME)
-        builder.setMessage(getString(R.string.logic_credits)+
-                "\n"+
-                getString(R.string.app_credits))
-        builder.setPositiveButton(getString(R.string.exit_title)) { _, _ ->
-            super.onBackPressed()
+        val aboutDialog = AlertDialog.Builder(this)
+        aboutDialog.setTitle(getString(R.string.app_name)+" "+BuildConfig.VERSION_NAME)
+        aboutDialog.setMessage(getString(R.string.logic_credits)+"\n"+getString(R.string.app_credits))
+        aboutDialog.setPositiveButton(getString(R.string.exit_title)) { _, _ ->
+            finish()
         }
-        builder.setNegativeButton(getString(R.string.back)) { dialog, _ ->
-            dialog.cancel()
+        aboutDialog.setNegativeButton(getString(R.string.back)) { dialog, _ ->
+            dialog.dismiss()
         }
-        builder.setNeutralButton(getString(R.string.refresh)) { dialog, _ ->
-            dialog.cancel()
+        aboutDialog.setNeutralButton(getString(R.string.refresh)) { dialog, _ ->
+            dialog.dismiss()
             findViewById<WebView>(R.id.webView).loadUrl(url)
         }
-        builder.show()
+        aboutDialog.show()
     }
 }
