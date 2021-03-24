@@ -7,4 +7,5 @@
     <string name="error">Error</string>
     <string name="retry_connect">Check your internet connection</string>
     <string name="back">Back</string>
+    <string name="refresh">Refresh</string>
 </resources>

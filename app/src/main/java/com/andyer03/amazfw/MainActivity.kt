@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.view.KeyEvent
 import android.webkit.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -66,26 +65,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
     override fun onBackPressed() {
-        findViewById<WebView>(R.id.webView).loadUrl(url)
-    }
-    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(getString(R.string.app_name)+
-                    " "+
-                    BuildConfig.VERSION_NAME)
-            builder.setMessage(getString(R.string.logic_credits)+
-                    "\n"+
-                    getString(R.string.app_credits))
-            builder.setPositiveButton(getString(R.string.exit_title)) { _, _ ->
-                super.onBackPressed()
-            }
-            builder.setNegativeButton(getString(R.string.back)) { dialog, _ ->
-                dialog.cancel()
-            }
-            builder.show()
-            return true
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.app_name)+
+                " "+
+                BuildConfig.VERSION_NAME)
+        builder.setMessage(getString(R.string.logic_credits)+
+                "\n"+
+                getString(R.string.app_credits))
+        builder.setPositiveButton(getString(R.string.exit_title)) { _, _ ->
+            super.onBackPressed()
         }
-        return super.onKeyLongPress(keyCode, event)
+        builder.setNegativeButton(getString(R.string.back)) { dialog, _ ->
+            dialog.cancel()
+        }
+        builder.setNeutralButton(getString(R.string.refresh)) { dialog, _ ->
+            dialog.cancel()
+            findViewById<WebView>(R.id.webView).loadUrl(url)
+        }
+        builder.show()
     }
 }

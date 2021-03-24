@@ -8,4 +8,5 @@
     <string name="error">Ошибка</string>
     <string name="retry_connect">Проверьте подключение к интернету</string>
     <string name="back">Назад</string>
+    <string name="refresh">Обновить</string>
 </resources>
