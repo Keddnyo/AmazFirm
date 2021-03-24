@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 val alertDialog = AlertDialog.Builder(this@MainActivity)
                 alertDialog.setTitle(getString(R.string.error))
                 alertDialog.setMessage(getString(R.string.retry_connect))
-                alertDialog.setNegativeButton(getString(R.string.back)) { dialog, _ ->
+                alertDialog.setNegativeButton(getString(R.string.refresh)) { dialog, _ ->
                     dialog.dismiss()
                     webView.reload()
                     webView.loadUrl(url)
